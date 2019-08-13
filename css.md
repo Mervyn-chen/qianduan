@@ -18,6 +18,20 @@
 
 ### **rem和em的区别？**
 
+### tramsform 和translate 以及translate
+
+translate:移动，transform的一个方法
+
+transform:变形。改变
+
+transition: 允许CSS属性值在一定的时间区间内平滑的过渡，**（过渡动画）**
+
+与Transition不同的是：
+
+1. Animation可以通过keyframe显示控制当前帧的属性值，而   Transition只能隐式来进行（不能指定每帧的属性值），所以相对 而言Animation的功能更加灵活。
+
+2. Animation通过模拟属性值改变来实现动画，动画结束之后元素的属性没有变化；而Transiton确实改变了元素的属性值，动画结束之后元素的属性发生了变化；这一点，这在实际应用中会产生很大的区别。
+
 ### **position属性有哪些？**
 
 static: 默认值，位于文档流之中，正常布局
@@ -64,6 +78,17 @@ BFC即块状格式化上下文，BFC 是一个独立的布局环境,可以理解
 创建BFC的方法：浮动元素 、绝对定位元素、display值为 inline-block | flex | inline-flex | table-cell 或 table-caption、overflow值为hidden，auto，scroll
 
 用处：避免外边距折叠，包含浮动元素（防止高度塌陷），避免浮动元素覆盖（防止文字环绕）
+
+### translate和top/left的比较
+
+translate是transform的一个方法，top、left是基于父元素的：  translate的参数：left（x 坐标） 和 top（y 坐标） 位置参数 ，
+如果是百分比，会以本身的长宽做参考top/left是布局类的样式，
+
+top/left是布局类样式     这个样式的变化会导致重排（reflow/relayout），所谓重排即指对这些节点以及受这些节点影响的其它节点，进行CSS计算->布局->重绘过程，这个过程的前2步是消耗大量资源的
+
+translate是一个绘制样式（这名词我瞎编的），这个样式的变化会导致重绘（repaint），即在屏幕上重新画一下，不会进行CSS计算和布局这2个性能大户，所以我们认为translate性能上要明显好于top/left
+
+translate3D传说因为走的是3D，所以能得到更完整的GPU加速的支持，在GPU中还有贴图缓存等手段帮你优化性能，所以更快
 
 ### viewport
 

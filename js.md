@@ -97,6 +97,20 @@ a = o;    //赋值给变量
 
 ##### **promise的原理是什么？**
 
+```
+class Promise {
+    constructor(executor) {
+        // 设置属性 status value resolveCbs rejectCbs
+    }
+    then(onResolved, onRejected) {}
+    catch (cb) {
+        return this.then(null, cb)
+    }
+}
+```
+
+
+
 ##### **CommonJS，AMD，CMD以及ES6 import的区别是什么？**
 
 ##### **高阶函数是什么？有什么用？**
