@@ -97,6 +97,16 @@ a = o;    //赋值给变量
 
 ##### **promise的原理是什么？**
 
+`promise`可以有三种状态，分别是`pedding` 、`Fulfilled`、 `Rejected`。
+
+`Pending Promise`对象实例创建时候的初始状态
+`Fulfilled` 可以理解为成功的状态
+`Rejected`可以理解为失败的状态
+
+`Promise`上还有`then`方法，`then` 方法就是用来指定`Promise` 对象的状态改变时确定执行的操作，`resolve` 时执行第一个函数（onFulfilled），`reject`时执行第二个函数（onRejected）
+
+当状态变为`resolve`时便不能再变为`reject`，反之同理。
+
 ```
 class Promise {
     constructor(executor) {
@@ -112,6 +122,12 @@ class Promise {
 
 
 ##### **CommonJS，AMD，CMD以及ES6 import的区别是什么？**
+
+CommonJS是运行时加载，ES6是编译时输出接口
+CommonJS是输出的一个值的复制，而ES6输出的是值的引用
+AMD 异步模块定义，通过define函数声明依赖模块（数组）和回调函数，特点是依赖前置，其加载模块完成后就会执行该模块，所有模块都加载执行完后会进入回调函数，执行主逻辑，这样的效果就是依赖模块的执行顺序和书写顺序不一定一致，看网络速度，哪个先下载下来，哪个先执行，但是主逻辑一定在所有依赖加载完成后才执行。
+CMD 同样为异步加载，区别在于其为就近依赖，需要使用把模块变为字符串解析一遍才知道依赖了那些模块，其加载完某个依赖模块后并不执行，只是下载而已，在所有依赖模块加载完成后进入主逻辑，遇到require语句的时候才执行对应的模块，这样模块的执行顺序和书写顺序是完全一致的。
+
 
 ##### **高阶函数是什么？有什么用？**
 
@@ -211,3 +227,49 @@ Null类型也只有一个值，即`null`。null用来表示尚未存在的对象
 
 语法比函数表达式更短，并且不绑定自己的 this，arguments，super 或 new.target。这些函数表达式最适合用于非方法函数，并且它们不能用作构造函数。
 
+# es6中的class使用
+
+```
+//传统生成实例对象通过构造函数
+function Point(x, y) {
+  this.x = x;
+  this.y = y;
+}
+Point.prototype.toString = function () {
+  return '(' + this.x + ', ' + this.y + ')';
+};
+
+var p = new Point(1, 2);
+```
+
+\>生成实例对象，构造函数的另一种写法
+
+​      \>类的数据类型是函数，本身指向构造函数
+
+​      \>类的方法都定义在prototype上面，Object.assign方法可以一次向类添加多个方法
+
+# **es6 class 与es5的面向对象的区别：**
+
+ 1. 写法不同，使用关键字class
+
+ 2.当new一个实例，默认有一个constructor方法，且默认返回实例对象（this）,也可以返回另一对象
+
+ 3.类的所有方法都在prototype属性上，但是不可枚举，且每方法结束不能使用分号
+
+ 4.类的调用必须通过new 一个实例,且类的内部默认使用严格模式
+
+ 5.不存在变量提升，必须先声明，再调用
+
+ 6.class的this 默认指向当前类
+
+ 7.class 的静态方法，使用关键字static,不需new,直接通过类来调用
+
+ 8. 实例属性和静态属性的写法，实例属性在类的内部直接使用等式（=）写法，也可以写在constructor 方法里，静态属性只需在实例属性前加一个关键字static即可 
+
+9.类的继承使用关键字extends,继承机制与es5完全不同，
+
+　　es5的继承原理：先new子类的实例对象this,再通过将父类的方法和属性添加到子类的this上(parents.call(this))。
+
+　　Es6的继承原理：先创造父类的实例对象this,所以要构造函数constructor（）访问父类的属性使用this,必须先调用super()方法；再通过子类的constructor()来修改this
+
+10．类的继承可以继承原生的构造函数，es5不可以
