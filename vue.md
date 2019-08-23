@@ -46,7 +46,41 @@ MVVM是Model-View-ViewModel的简写。即模型-视图-视图模型。【模型
   原生input其实只是一个语法糖，:bind="value"与[@change](https://github.com/change)="value = $event.target.value"的结合。
   自定义组件的时候的v-model默认监听change事件和绑定value 的prop。
 
-  
+  ### 父子组件传值
+
+  ```
+  <div id="app">   
+  <!--父组件，可以在引用子组件的时候，通过属性绑定（v:bind）的形式，把需要传递给子组件的数据    传递到子组件内部-->    
+  <com1 :parentmsg="msg"  :parentmsg2="msg2">  
+  </com1></div><script>    
+  var vm = new Vue({       
+  el: '#app',       
+  data:{           
+  msg: '123父组件中的数据' ,           
+  msg2:'124131313'        },      
+  methods: {        },       
+  components:{           
+  'com1':{               
+  //子组件中，默认无法访问到父组件中的data和methods                template: '<h1 @click="change"> 这是子组件 {{parentmsg}}、{{parentmsg2}}</h1>',              
+  //注意，组件中的所有props中的数据都是通过父组件传递给子组件的       //propes中的数据是只可读               
+  props: ['parentmsg','parentmsg2'] ,
+  // 把父组件传递过来的parentmsg属性， 数组中，定义一下，这样才能用这个数据,                
+  //注意子组件中的data数据，并不是通过父组件传递过来的，而是子组件字有的，比如：子组件通过Ajax请求回来的值，可以放到data中           //dat a中的数据可读可写                
+  data(){                   
+          return {                       
+                  title: '123',                       
+                  content: 'qqq'                  
+  				}              
+  		},              
+   methods: {                   
+                      change(){                       
+                      this.parentmsg='被修改'                  
+  		         }                
+  	       },          
+  		}       
+  	}    
+  })</script>
+  ```
 
 - **你有使用过vue开发多语言项目吗？说说你的做法？**
 
@@ -195,137 +229,411 @@ MVVM是Model-View-ViewModel的简写。即模型-视图-视图模型。【模型
 
 - **如何在子组件中访问父组件的实例？**
 
+   this.$parent拿到父组件实例
+   this.$children拿到子组件实例（数组）
+
+   Vue中子组件调用父组件的方法，这里有三种方法提供参考：
+   1：直接在子组件中通过this.$parent.event来调用父组件的方法
+   2：在子组件里用$emit向父组件触发一个事件，父组件监听这个事件
+   3：父组件把方法传入子组件中，在子组件里直接调用这个方法
+
 - **watch的属性用箭头函数定义结果会怎么样？**
+
+   因为箭头函数默绑定父级作用域的上下文，所以不会绑定vue实例，所以 this 是undefind
+
+   this是undefined，要更改的属性会报TypeError错误, Cannot read property 'xxx' of undefined
 
 - **在vue项目中如果methods的方法用箭头函数定义结果会怎么样？**
 
+   在html里面直接用<script>引入vue的，this的默认绑定在window上，而我是用的webpack构建的，默认在严格模式下，this默认绑定为undefined
+
 - **在vue项目中如何配置favicon？**
+
+   html模版加入meta标签，引入favicon
 
 - **你有使用过babel-polyfill模块吗？主要是用来做什么的？**
 
+   ES6的转码。IE的兼容
+
+   babel默认只转换语法,而不转换新的API,如需使用新的API,还需要使用对应的转换插件或者polyfill去模拟这些新特性。
+
 - **说说你对vue的错误处理的了解？**
+
+   分为errorCaptured与errorHandler。
+   errorCaptured是组件内部钩子，可捕捉本组件与子孙组件抛出的错误，接收error、vm、info三个参数，return false后可以阻止错误继续向上抛出。
+   errorHandler为全局钩子，使用Vue.config.errorHandler配置，接收参数与errorCaptured一致，2.6后可捕捉v-on与promise链的错误，可用于统一错误处理与错误兜底。
 
 - **在vue事件中传入$event，使用e.target和e.currentTarget有什么区别？**
 
+   currentTarget 始终是监听事件者，而 target 是事件的真正发出者
+
 - **在.vue文件中style是必须的吗？那script是必须的吗？为什么？**
+
+   都不是必须的
+   如果是普通组件那么只能是一个静态html
+   如果是函数式组件， 那么可以直接使用props等函数式组件属性
 
 - **vue怎么实现强制刷新组件？**
 
+   this.$forceUpdate() 强制重新渲染
+
+   强制重新刷新某组件
+
+   ```
+   //模版上绑定key
+   <SomeComponent :key="theKey"/>
+   //选项里绑定data
+   data(){
+     return{
+         theKey:0
+     }
+   }
+   //刷新key达到刷新组件的目的
+   theKey++;
+   ```
+
+   v-if
+
 - **vue自定义事件中父组件怎么接收子组件的多个参数？**
+
+   this.$emit("eventName",data)
+   data为一个对象
 
 - **实际工作中，你总结的vue最佳实践有哪些？**
 
 - **vue给组件绑定自定义事件无效怎么解决？**
 
+   两种方式
+   1、组件外部加修饰符.navtive
+   2、组件内部声明$emit('自定义事件')
+
 - **vue的属性名称与method的方法名称一样时会发生什么问题？**
+
+   报错 `"Method 'xxx' has already been defined as a data property"`
+
+   键名优先级：props > data > methods
 
 - **vue变量名如果以_、$开头的属性会发生什么问题？怎么访问到它们的值？**
 
+   以 _ 或 $ 开头的属性不会被 Vue 实例代理，因为可能和 Vue 内置的属性、API 方法冲突。可以使用例如 vm.$data._property
+
 - **vue使用v-for遍历对象时，是按什么顺序遍历的？如何保证顺序？**
+
+   在遍历对象时，会按 Object.keys() 的结果遍历，但是不能保证它的结果在不同的 JavaScript 引擎下都一致。
 
 - **vue如果想扩展某个现有的组件时，怎么做呢？**
 
+   不对原组件进行更改的：
+
+   1. 使用Vue.extend直接扩展
+
+   2. 使用Vue.mixin全局混入
+
+   3. HOC封装
+
+      可以加slot扩展
+
 - **说下attrs和*attrs*和listeners的使用场景**
+
+   组件传值的时候会用到 爷爷在父亲组件传递值，父亲组件会通过$attrs获取到不在父亲props里面的所有属性，父亲组件通过在孙子组件上绑定$attrs 和 $listeners 使孙组件获取爷爷传递的值并且可以调用在爷爷那里定义的方法
 
 - **分析下vue项目本地开发完成后部署到服务器后报404是什么原因呢？**
 
+   1.检查nginx配置，是否正确设置了资源映射条件；
+   2.检查vue.config.js中是否配置了publicPath，若有则检查是否和项目资源文件在服务器摆放位置一致。
+
 - **v-once的使用场景有哪些？**
+
+   单次触发的场景
+
+   表单提交。可防止用户在请求未及时响应时，多次提交~
 
 - **说说你对vue的表单修饰符.lazy的理解**
 
+   input标签v-model用lazy修饰之后，vue并不会立即监听input Value的改变，会在input失去焦点之后，才会触发input Value的改变
+
 - **vue为什么要求组件模板只能有一个根元素？**
+
+   
 
 - **EventBus注册在全局上时，路由切换时会重复触发事件，如何解决呢？**
 
+   在组件内的beforeRouteLeave中移除事件监听
+
+   建议在created里注册，在beforeDestory移出
+
 - **怎么修改vue打包后生成文件路径？**
+
+   webpack：output.path
+   vue-cli3: outputDir
 
 - **你有使用做过vue与原生app交互吗？说说vue与ap交互的方法**
 
+   app定义一个方法传给我们，根据方法调用
+
+   jsBridge,建立连接，然后相互调用
+
 - **使用vue写一个tab切换**
+
+   v-for循环list，根据索引值设置active的样式和显示内容
+
+   ```
+   `<div id="app">
+       <ul class="tabs">
+           <li class="li-tab" v-for="(item,index) in tabsParam" 
+           @click="toggleTabs(index)" 
+           :class="index===nowIndex?'active':''">{{item}}</li>
+       </ul>
+       <div class="divTab" v-show="nowIndex===0">我是tab1</div>
+       <div class="divTab" v-show="nowIndex===1">我是tab2</div>
+       <div class="divTab" v-show="nowIndex===2">我是tab3</div>
+       <div class="divTab" v-show="nowIndex===3">我是tab4</div>
+   </div>`
+   ```
 
 - **vue中什么是递归组件？举个例子说明下？**
 
+   当前注册一个vue组件定义 name 为 'node-tree' ，在组件 template 内部调用 实现递归。
+
+   用过组件的name属性，调用自身。例如生成树型菜单。
+
 - **怎么访问到子组件的实例或者子元素？**
+
+   this.$children/this.$refs.xxx
 
 - **在子组件中怎么访问到父组件的实例？**
 
+   
+
 - **在组件中怎么访问到根实例？**
+
+   ```
+   this.$root
+   ```
 
 - **说说你对Object.defineProperty的理解**
 
+   Object.defineProperty定义新属性或修改原有的属性；
+   vue的数据双向绑定的原理就是用的Object.defineProperty这个方法，里面定义了setter和getter方法，通过观察者模式（发布订阅模式）来监听数据的变化，从而做相应的逻辑处理。
+
 - **vue组件里写的原生addEventListeners监听事件，要手动去销毁吗？为什么？**
+
+   肯定要，一方面是绑定多次，另一方面是函数没释放会内存溢出
 
 - **vue组件里的定时器要怎么销毁？**
 
+   当生命周期销毁后，并没有将组件中的计时器销毁，虽然页面上看不出来，但是如果在控制台打印的话，会发现计时器还在运行，所以要销毁计时器，避免代码一直执行
+
 - **vue组件会在什么时候下被销毁？**
+
+   v-if=‘false‘
+
+   没有使用keep-alive时的路由切换。
 
 - **使用vue渲染大量数据时应该怎么优化？说下你的思路！**
 
+   1.如果需要响应式，考虑使用虚表（只渲染要显示的数据）；
+   2.如果不考虑响应式，变量在beforeCreated或created中声明（Object.freeze会导致列表无法增加数据）
+
 - **在vue中使用this应该注意哪些问题？**
+
+   vue中使用匿名函数，会出现this指针改变。
+   解决方法
+   1.使用箭头函数
+   2.定义变量绑定this至vue对象
 
 - **你有使用过JSX吗？说说你对JSX的理解**
 
+   jsx不是一门新的语言，是一种新的语法糖。让我们在js中可以编写像html一样的代码。
+   允许XML语法直接加入到JavaScript代码中，让你能够高效的通过代码而不是模板来定义界面
+
 - **说说组件的命名规范**
+
+   1.kebab-case（短横线分隔命名），引用时必须也采用kebab-case；
+   2.PascalCase（首字母大写命名），引用时既可以采用PascalCase也可以使用kebab-case；
+   但在DOM中使用只有kebab-case是有效的
 
 - **怎么配置使vue2.0+支持TypeScript写法？**
 
+   使用
+   vuejs/vue-class-component
+
+   - 配置ts-loader，tsconfig
+   - 增加类型扩展，让ts识别vue文件
+   - vue文件中script里面换成ts写法， 需要增加几个ts扩展的package， 比如vue-property-decorator
+
 - **`<template></template>`有什么用？**
+
+   当做一个不可见的包裹元素，减少不必要的DOM元素，整个结构会更加清晰。
 
 - **vue的is这个特性你有用过吗？主要用在哪些方面？**
 
+   动态组件，当你多个组件需要通过 v-if 切换时，可以使用 is 来简化代码
+
+   vue中is的属性引入是为了解决dom结构中对放入html的元素有限制的问题
+
 - **vue的:class和:style有几种表示方式？**
+
+   :class 绑定变量 绑定对象 绑定一个数组 绑定三元表达式
+   :style 绑定变量 绑定对象 绑定函数返回值 绑定三元表达式
 
 - **你了解什么是函数式组件吗？**
 
+   需要提供一个render方法， 接受一个参数（createElement函数）， 方法内根据业务逻辑，通过createElement创建vnodes，最后return vnodes
+
 - **vue怎么改变插入模板的分隔符？**
+
+   delimiters ?????
 
 - **组件中写name选项有什么作用？**
 
+   如果用过devTool会有详细感受
+   如果你使用keep-alive, component等内置组件时
+   如果你使用循环组件时遇到了bug, 你就会知道为什么了
+
+   项目使用keep-alive时，可搭配组件name进行缓存过滤
+   DOM做递归组件时需要调用自身name
+   vue-devtools调试工具里显示的组见名称是由vue中组件name决定的
+
 - **说说你对provide和inject的理解**
+
+   通过在父组件中inject一些数据然后再所有子组件中都可以通过provide获取使用该参数,
+
+   主要是为了解决一些循环组件比如tree, menu, list等, 传参困难, 并且难以管理的问题, 主要用于组件封装, 常见于一些ui组件库
 
 - **开发过程中有使用过devtools吗？**
 
+   devtools确实是个好东西，大力协助vue项目开发，传参，数据展示，用于调试vue应用
+
 - **说说你对slot的理解有多少？slot使用场景有哪些？**
+
+   slot, 插槽, 在使用组件的时候, 在组建内部插入东西.
+   组件封装的时候最常使用到
 
 - **你有使用过动态组件吗？说说你对它的理解**
 
+   
+
 - **prop验证的type类型有哪几种？**
+
+   Number, String, Boolean, Array, Function, Object
+
+   ```
+   //七种
+   props:{
+   	title:String,
+   	likes: Number,
+   	isPublished: Boolean,
+   	commentIds: Array,
+   	author: Object,
+   	callback: Function,
+   	contactsPromise: Promise
+   }
+   ```
 
 - **prop是怎么做验证的？可以设置默认值吗？**
 
+   单个类型就用Number等基础类型，多个类型用数组，必填的话设置require为true，默认值的话设置default，对象和数组设置默认用工厂函数，自定义验证函数validator。
+
 - **怎么缓存当前打开的路由组件，缓存后想更新当前组件怎么办呢？**
+
+   可以在路由meta中加入参数, 对打开的路由进行keep-alive的判断, 通过钩子active等
 
 - **说说你对vue组件的设计原则的理解**
 
+   第一: 容错处理, 这个要做好, 极端场景要考虑到, 不能我传错了一个参数你就原地爆炸
+   第二: 缺省值(默认值)要有, 一般把应用较多的设为缺省值
+   第三: 颗粒化, 把组件拆分出来.
+   第四: 一切皆可配置, 如有必要, 组件里面使用中文标点符号, 还是英文的标点符号, 都要考虑到
+   第五: 场景化, 如一个dialog弹出, 还需要根据不同的状态封装成success, waring, 等
+   第六: 有详细的文档/注释和变更历史, 能查到来龙去脉, 新版本加了什么功能是因为什么
+   第七: 组件名称, 参数prop, emit, 名称设计要通俗易懂, 最好能做到代码即注释这种程度
+   第八: 可拓展性, 前期可能不需要这个功能, 但是后期可能会用上, 要预留什么, 要注意什么, 心里要有逼数
+   第九: 规范化,我这个input组件, 叫`on-change`, 我另外一个select组件叫`change`, 信不信老子捶死你
+   第十: 分阶段: 不是什么都要一期开发完成看具体业务, 如果一个select, 我只是个简单的select功能, 什么`multi`老子这个版本压根不需要, 别TM瞎折腾! 给自己加戏
+
 - **你了解vue的diff算法吗？**
+
+   
 
 - **vue如何优化首页的加载速度？**
 
+   异步路由和异步加载
+   还有分屏加载, 按需加载, 延时加载图片等, cdn, 域名才分
+
 - **vue打包成最终的文件有哪些？**
+
+   vendor.js, app.js, app.css,
+   1.xxx.js
+   2.xxx.js
+
+   如果有设置到单独提取css的话
+   还有
+   1.xxx.css
+   ......
 
 - **ajax、fetch、axios这三都有什么区别？**
 
+   ajax是概念 异步交换数据的概念
+   fetch是浏览器提供的webAPI 原理是基于xmlHttpRequest的封装
+   axios是第三方库 基于xmlHttpRequest的封装 使用更便捷
+
 - **vue能监听到数组变化的方法有哪些？为什么这些方法能监听到呢？**
+
+   对中转的数据做了监听
 
 - **vue中是如何使用event对象的？**
 
+   [@click](https://github.com/click)=“func” 默认第一个参数传入event对象
+   [@click](https://github.com/click)="func(0, $event)" 如果自己需要传入参数和event对象，则需要使用$event来获取event对象并传入func
+
 - **vue首页白屏是什么问题引起的？如何解决呢？**
 
+   路由没配baseUrl
+
+   在config文件夹中找到index.js打开把
+   assetsPublicPath: '/'
+   改成
+   assetsPublicPath: './'
+   再次执行 npm run build 就可以了。
+
 - **说说你对单向数据流和双向数据流的理解**
+
+   单向数据流：所有状态的改变可记录、可跟踪，源头易追溯；所有数据只有一份，组件数据只有唯一的入口和出口，使得程序更直观更容易理解，有利于应用的可维护性；一旦数据变化，就去更新页面(data-页面)，但是没有(页面-data)；如果用户在页面上做了变动，那么就手动收集起来(双向是自动)，合并到原有的数据中。
+   双向数据流：无论数据改变，或是用户操作，都能带来互相的变动，自动更新。
 
 - **移动端ui你用的是哪个ui库？有遇到过什么问题吗？**
 
 - **你知道nextTick的原理吗？**
 
+   在下次 DOM 更新循环结束之后执行延迟回调。在修改数据之后立即使用这个方法，获取更新后的 DOM。
+
 - **说说你对v-clock和v-pre指令的理解**
+
+   v-cloak指令只是在标签中加入一个v-cloak自定义属性，在HTML还编译完成之后该属性会被删除。
+   v-pre可以用来阻止预编译，有v-pre指令的标签内部的内容不会被编译，会原样输出。
 
 - **写出你知道的表单修饰符和事件修饰符**
 
+   事件修饰符.stop .prevent .capture .self .once .passive
+   表单修饰符.number .lazy .trim
+
 - **说说你对proxy的理解**
+
+   vue的数据劫持有两个缺点:
+   1、无法监听通过索引修改数组的值的变化
+   2、无法监听object也就是对象的值的变化
+   所以vue2.x中才会有$set属性的存在
+
+   proxy是es6中推出的新api，可以弥补以上两个缺点，所以vue3.x版本用proxy替换object.defineproperty
 
 - **你有自己用vue写过UI组件库吗？**
 
+   这个……全局的theme属性然后做class判断或者加载不同的样式文件。一种是编译时换肤 一种是用户操作换肤。编译时换肤可以通过css in js相关技术修改css预处理器的变量 。用户操作换肤 只能内置一些styleb变量供用户选择了
+
 - **用vue怎么实现一个换肤的功能？**
+
+   
 
 - **有在vue中使用过echarts吗？踩过哪些坑？如何解决的？**
 
@@ -335,29 +643,77 @@ MVVM是Model-View-ViewModel的简写。即模型-视图-视图模型。【模型
 
 - **SSR解决了什么问题？有做过SSR吗？你是怎么做的？**
 
+   SSR服务端渲染，解决的SEO问题，首屏加载速度
+
 - **说说你觉得认为的vue开发规范有哪些？**
+
+   
 
 - **vue部署上线前需要做哪些准备工作？**
 
+   主要assetsPublicPath、publicPath 两个
+
 - **vue过渡动画实现的方式有哪些？**
+
+   1.使用vue的transition标签结合css样式完成动画
+   2.利用animate.css结合transition实现动画
+   3.利用 vue中的钩子函数实现动画
 
 - **vue在created和mounted这两个生命周期中请求数据有什么区别呢？**
 
+   1. created阶段的ajax请求与mounted请求的区别：前者页面视图未出现，如果请求信息过多，页面会长时间处于白屏状态
+   2. 在created的时候，视图中的html并没有渲染出来，所以此时如果直接去操作html的dom节点，一定找不到相关的元素
+      而在mounted中，由于此时html已经渲染出来了，所以可以直接操作dom节点，（此时document.getelementById 即可生效了）。
+
 - **vue父子组件双向绑定的方法有哪些？**
+
+   1.利用对象的引用关系来实现
+   2.父子组件之间的数据传递
+   3.使用.sync修饰符
 
 - **vue怎么获取DOM节点？**
 
+   view：v-ref:xxx
+   data：this.$ref.xxx 这样就ok啦
+
 - **vue项目有做过单元测试吗？**
+
+   vue+vuex+vue-router+ts+vue-cli demo 实现todolist 并进行单元测试
+   vue vuex 与ts的结合部分还不是很友好
 
 - **vue项目有使用过npm run build --report吗？**
 
+   给 process.env 对象添加了一个属性 npm_config_report: "true"，表示开启编译完成后的报告。
+
 - **如何解决vue打包vendor过大的问题？**
+
+   1、在webpack.base.conf.js新增externals配置，表示不需要打包的文件，然后在index.html中通过CDN引入
+
+   ```
+   externals: {
+       "vue": "Vue",
+       "vue-router": "VueRouter",
+       "vuex": "Vuex",
+       "element-ui": "ELEMENT",
+       "BMap": "BMap"
+     }
+   ```
+
+   2、使用路由懒加载
 
 - **webpack打包vue速度太慢怎么办？**
 
+   升级webpack4,支持多进程
+
 - **vue在开发过程中要同时跟N个不同的后端人员联调接口（请求的url不一样）时你该怎么办？**
 
+   webpack 的devServer配置下代理
+
 - **vue要做权限管理该怎么做？如果控制到按钮级别的权限怎么做？**
+
+   通过获取当前用户的权限去比对路由表，生成当前用户具的权限可访问的路由表，通过 `router.addRoutes` 动态挂载到 `router` 上。
+
+   你可以在后台通过一个 tree 控件或者其它展现形式给每一个页面动态配置权限，之后将这份路由表存储到后端。当用户登录后得到 `roles`，前端根据`roles` 去向后端请求可访问的路由表，从而动态生成可访问页面，之后就是 router.addRoutes 动态挂载到 router 上，你会发现原来是相同的
 
 - **说下你的vue项目的目录结构，如果是大型项目你该怎么划分结构和划分组件呢？**
 
@@ -365,13 +721,19 @@ MVVM是Model-View-ViewModel的简写。即模型-视图-视图模型。【模型
 
 - **你们项目为什么会选vue而不选择其它的框架呢？**
 
+   Vue.js是一个轻巧，高性能，可组件化的MVVM库，同时拥有非常容易上手的API; VUE是单页面应用，使页面局部刷新，不用每次跳转页面都要请求所有数据和DOM，这样大大加快了访问速度和提升用户体验。而且他的第三方UI库很多节省开发时间。
+
 - **对于即将到来的vue3.0特性你有什么了解的吗？**
 
 - **vue开发过程中你有使用什么辅助工具吗？**
 
 - **vue和微信小程序写法上有什么区别？**
 
+   [https://www.jianshu.com/p/d4a053599572](https://www.jianshu.com/p/d4a053599572)
+
 - **怎么缓存当前的组件？缓存后怎么更新？**
+
+   
 
 - **你了解什么是高阶组件吗？可否举个例子说明下？**
 
@@ -403,6 +765,8 @@ MVVM是Model-View-ViewModel的简写。即模型-视图-视图模型。【模型
 
 - **你有使用过render函数吗？有什么好处？**
 
+   template也会翻译成render，只有一点，template中元素的tag_name是静态的，不可变化，使用createEelment可以生成不同tag_name, 比如h1 ... h6, 可以通过一个number变量控制
+
 - **写出你常用的指令有哪些？**
 
 - **手写一个自定义指令及写出如何调用**
@@ -415,6 +779,8 @@ MVVM是Model-View-ViewModel的简写。即模型-视图-视图模型。【模型
 
 - **DOM渲染在哪个周期中就已经完成了？**
 
+   mounted生命周期
+
 - **第一次加载页面时会触发哪几个钩子？**
 
 - **vue生命周期总共有几个阶段？**
@@ -425,7 +791,17 @@ MVVM是Model-View-ViewModel的简写。即模型-视图-视图模型。【模型
 
 - **如何引入scss？引入后如何使用？**
 
+   安装scss依赖包：
+   `npm install sass-loader --save-dev npm install node-sass --save-dev`
+   在build文件夹下修改 webpack.base.conf.js 文件：
+   在 module 下的 rules 里添加配置，如下：
+   `{ test: /\.scss$/, loaders: ['style', 'css', 'sass'] }`
+   应用：
+   在vue文件中应用scss时，需要在style样式标签上添加lang="scss"，即`<style lang="scss">。`
+
 - **使用vue开发过程你是怎么做接口管理的？**
+
+   在request.js中对axios请求和响应进行劫持，统一处理，然后在api文件夹中引入request.js后再使用封装后的方法进行请求
 
 - **为何官方推荐使用axios而不用vue-resource？**
 
