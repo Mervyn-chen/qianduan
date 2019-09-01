@@ -1,3 +1,11 @@
+# **js类和继承**
+
+[]()
+
+[]: https://github.com/ziyi2/js/blob/master/JS%E7%B1%BB%E5%92%8C%E7%BB%A7%E6%89%BF.md	"js类和继承"
+
+
+
 ##### **闭包是什么？有什么用？**
 
 闭包是指有权访问另一函数作用域中变量的函数，创建闭包的常用方式就是在一个函数内部定义另一个函数。
@@ -31,6 +39,70 @@
 页面加载时，将图片加载的链接，保存在img标签的自定义属性中，src属性为空，并监听窗口的scroll事件。当img标签出现在视口中时，利用js将图片加载编写填写至src属性中，实现动态加载图片。
 
 
+
+### `bind`的源码实现
+
+```
+Function.prototype.myCall = function (obj) {
+  let context = obj || window
+  obj.fn = this
+  let args = [...arguments].splice(1)
+  let result = obj.fn(...args)
+  delete obj.fn
+  return result
+}
+
+Function.prototype.myApply = function (obj) {
+  let context = obj || window
+  obj.fn = this
+  let args = arguments[1]
+  let result
+  if (args) {
+    result = obj.fn(...args)
+  } else {
+    result = obj.fn()
+  }
+
+  delete obj.fn
+
+  return result
+}
+
+Function.prototype.myBind = function (obj) {
+  let context = obj || window
+  let _this = this
+  let _args = [...arguments].splice(1)
+
+  return function () {
+    let args = arguments
+    // 产生副作用
+    // return obj.fn(..._args, ...args)
+    return _this.apply(context, [..._args, ...args])
+  }
+}
+
+function myFun (argumentA, argumentB) {
+  console.log(this.value)
+  console.log(argumentA)
+  console.log(argumentB)
+  return this.value
+}
+
+let obj = {
+  value: 'ziyi2'
+}
+console.log(myFun.myCall(obj, 11, 22))
+console.log(myFun.myApply(obj, [11, 22]))
+console.log(myFun.myBind(obj, 33)(11, 22))
+```
+
+
+
+### 谈谈你对作用域链的理解
+
+当代码在一个环境中创建时，会创建变量对象的一个作用域链（scope chain）来保证对执行环境有权访问的变量和函数。作用域第一个对象始终是当前执行代码所在环境的变量对象（VO）。如果是函数执行阶段，那么将其activation object（AO）作为作用域链第一个对象，第二个对象是上级函数的执行上下文AO，下一个对象依次类推。
+
+在《JavaScript深入之变量对象》中讲到，当查找变量的时候，会先从当前上下文的变量对象中查找，如果没有找到，就会从父级(词法层面上的父级)执行上下文的变量对象中查找，一直找到全局上下文的变量对象，也就是全局对象。这样由多个执行上下文的变量对象构成的链表就叫做作用域链。
 
 ### Event Loop 是什么
 

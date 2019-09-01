@@ -30,6 +30,35 @@ MVVM是Model-View-ViewModel的简写。即模型-视图-视图模型。【模型
 
 
 
+### **VUE组件中 data 里面的数据为什么要return 出来**
+
+因为在JS 中只有函数才存在作用域,data是一个函数时，每个组件实例都有自己的作用域，每个实例相互独立,不会相互影响！！
+
+### 说说Vue中`$nextTick`的实现原理
+
+在下次 DOM 更新循环结束之后执行延迟回调。在修改数据之后立即使用这个方法，获取更新后的 DOM。
+
+```
+// 修改数据
+vm.msg = 'Hello'
+// DOM 还没有更新
+Vue.nextTick(function () {
+  // DOM 更新了
+})
+
+// 作为一个 Promise 使用 (2.1.0 起新增，详见接下来的提示)
+Vue.nextTick()
+ .then(function () {
+  // DOM 更新了
+})
+
+2.1.0 起新增：如果没有提供回调且在支持 Promise 的环境中，则返回一个 Promise。请注意 Vue 不自带 Promise 的 polyfill，所以如果你的目标浏览器不原生支持 Promise (IE：你们都看我干嘛)，你得自己提供 polyfill。
+0
+
+```
+
+
+
 ### vue
 
 - **从0到1自己构架一个vue项目，说说有哪些步骤、哪些重要插件、目录结构你会怎么组织**
