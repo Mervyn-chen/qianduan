@@ -101,11 +101,40 @@ Ajax应用程序的优势在于：
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'X-Requested-With, Content-Type'
     });
-    (3)、jsonp
-    定义和用法：通过动态插入一个script标签。浏览器对script的资源引用没有同源限制
-    同时资源加载到页面后会立即执行（没有阻塞的情况下）。
-    特点：通过情况下，通过动态创建script来读取他域的动态资源，获取的数据一般为json格式。
-    实例如下：
+
+浏览器将CORS请求分成两类：简单请求（simple request）和非简单请求（not-so-simple request）。
+
+只要同时满足以下两大条件，就属于简单请求。
+（1) 请求方法是以下三种方法之一：
+
+- HEAD
+- GET
+- POST
+
+（2）HTTP的头信息不超出以下几种字段：
+
+- Accept
+- Accept-Language
+- Content-Language
+- Last-Event-ID
+- Content-Type：只限于三个值application/x-www-form-urlencoded、multipart/form-data、text/plain
+
+##### 非简单请求
+
+非简单请求是那种对服务器有特殊要求的请求，比如请求方法是PUT或DELETE，或者Content-Type字段的类型是application/json。非简单请求的CORS请求，会在正式通信之前，增加一次HTTP查询请求，称为"预检"请求（preflight）。
+
+- Access-Control-Request-Method：该字段是必须的，用来列出浏览器的CORS请求会用到哪些HTTP方法，上例是PUT。
+- Access-Control-Request-Headers：该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段，上例是X-Custom-Header。
+
+如果浏览器否定了"预检"请求，会返回一个正常的HTTP回应，但是没有任何CORS相关的头信息字段。这时，浏览器就会认定，服务器不同意预检请求，因此触发一个错误，被XMLHttpRequest对象的onerror回调函数捕获。
+
+
+
+​    (3)、jsonp
+​    定义和用法：通过动态插入一个script标签。浏览器对script的资源引用没有同源限制
+​    同时资源加载到页面后会立即执行（没有阻塞的情况下）。
+​    特点：通过情况下，通过动态创建script来读取他域的动态资源，获取的数据一般为json格式。
+​    实例如下：
 
 ```
   <script>
@@ -121,7 +150,47 @@ Ajax应用程序的优势在于：
     </script>
 ```
 
-​    缺点：
+   后端写个小接口
+
+```
+// 处理成功失败返回格式的工具
+const {successBody} = require('../utli')
+class CrossDomain {
+  static async jsonp (ctx) {
+    // 前端传过来的参数
+    const query = ctx.request.query
+    // 设置一个cookies
+    ctx.cookies.set('tokenId', '1')
+    // query.cb是前后端约定的方法名字，其实就是后端返回一个直接执行的方法给前端，由于前端是用script标签发起的请求，所以返回了这个方法后相当于立马执行，并且把要返回的数据放在方法的参数里。
+    ctx.body = `${query.cb}(${JSON.stringify(successBody({msg: query.msg}, 'success'))})`
+  }
+}
+module.exports = CrossDomain
+```
+
+简单版前端
+
+
+
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <script type='text/javascript'>
+      // 后端返回直接执行的方法，相当于执行这个方法，由于后端把返回的数据放在方法的参数里，所以这里能拿到res。
+      window.jsonpCb = function (res) {
+        console.log(res)
+      }
+    </script>
+    <script src='http://localhost:9871/api/jsonp?msg=helloJsonp&cb=jsonpCb' type='text/javascript'></script>
+  </body>
+</html>
+```
+
+ 缺点：
 ​    　　1、这种方式无法发送post请求（这里）
 ​    　　2、另外要确定jsonp的请求是否失败并不容易，大多数框架的实现都是结合超时时间来判定。
 

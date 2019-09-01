@@ -1,3 +1,36 @@
+# Node.js中Event Loop和浏览器中Event Loop有什么区别
+
+```
+   ┌───────────────────────┐
+┌─>│        timers         │<————— 执行 setTimeout()、setInterval() 的回调
+│  └──────────┬────────────┘
+|             |<-- 执行所有 Next Tick Queue 以及 MicroTask Queue 的回调
+│  ┌──────────┴────────────┐
+│  │     pending callbacks │<————— 执行由上一个 Tick 延迟下来的 I/O 回调（待完善，可忽略）
+│  └──────────┬────────────┘
+|             |<-- 执行所有 Next Tick Queue 以及 MicroTask Queue 的回调
+│  ┌──────────┴────────────┐
+│  │     idle, prepare     │<————— 内部调用（可忽略）
+│  └──────────┬────────────┘     
+|             |<-- 执行所有 Next Tick Queue 以及 MicroTask Queue 的回调
+|             |                   ┌───────────────┐
+│  ┌──────────┴────────────┐      │   incoming:   │ - (执行几乎所有的回调，除了 close callbacks、timers、setImmediate)
+│  │         poll          │<─────┤  connections, │ 
+│  └──────────┬────────────┘      │   data, etc.  │ 
+│             |                   |               | 
+|             |                   └───────────────┘
+|             |<-- 执行所有 Next Tick Queue 以及 MicroTask Queue 的回调
+|  ┌──────────┴────────────┐      
+│  │        check          │<————— setImmediate() 的回调将会在这个阶段执行
+│  └──────────┬────────────┘
+|             |<-- 执行所有 Next Tick Queue 以及 MicroTask Queue 的回调
+│  ┌──────────┴────────────┐
+└──┤    close callbacks    │<————— socket.on('close', ...)
+   └───────────────────────┘
+```
+
+
+
 # 构建工具-Gulp知识点
 
 ​    Gulp 和 Grunt 同为前端自动化构建工具， 但在工作流程和效率等方面存在很大的差异，下面从工作流程、使用方式、效率和插件的重用性等多个方面进行比较分析。
