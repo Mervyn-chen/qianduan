@@ -261,6 +261,7 @@ display: -webkit-box;
 -webkit-box-orient: vertical;
 -webkit-line-clamp: 3;
 overflow: hidden;
+text-overflow: ellipsis;
 ```
 
 ### 改变 placeholder 的字体颜色大小
