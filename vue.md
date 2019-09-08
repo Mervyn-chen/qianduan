@@ -30,7 +30,18 @@ MVVM是Model-View-ViewModel的简写。即模型-视图-视图模型。【模型
 
 
 
+### Vue 的响应式原理中 Object.defineProperty 有什么缺陷？为什么在 Vue3.0 采用了 Proxy，抛弃了Object.defineProperty？
+
+
+
+1. Object.defineProperty无法监控到数组下标的变化，导致通过数组下标添加元素，不能实时响应；
+2. Object.defineProperty只能劫持对象的属性，从而需要对每个对象，每个属性进行遍历，如果，属性值是对象，还需要深度遍历。Proxy可以劫持整个对象，并返回一个新的对象。
+3. Proxy不仅可以代理对象，还可以代理数组。还可以代理动态增加的属性。
+
+
+
 ### **VUE组件中 data 里面的数据为什么要return 出来**
+因为组件是用来复用的，且在JS中的对象之间是引用关系，那如果组件中的data是一个对象，那么这样作用域没有隔离，子组件中的data属性值会相互影响，相反如果组件中的data是个函数，那么每个实例可以维护一份被返回对象的独立的拷贝，那么这样组件实例之间的data属性值就不会互相影响了。
 
 因为在JS 中只有函数才存在作用域,data是一个函数时，每个组件实例都有自己的作用域，每个实例相互独立,不会相互影响！！
 
@@ -78,36 +89,36 @@ Vue.nextTick()
   ### 父子组件传值
 
   ```
-  <div id="app">   
-  <!--父组件，可以在引用子组件的时候，通过属性绑定（v:bind）的形式，把需要传递给子组件的数据    传递到子组件内部-->    
-  <com1 :parentmsg="msg"  :parentmsg2="msg2">  
-  </com1></div><script>    
-  var vm = new Vue({       
-  el: '#app',       
-  data:{           
-  msg: '123父组件中的数据' ,           
-  msg2:'124131313'        },      
-  methods: {        },       
-  components:{           
-  'com1':{               
-  //子组件中，默认无法访问到父组件中的data和methods                template: '<h1 @click="change"> 这是子组件 {{parentmsg}}、{{parentmsg2}}</h1>',              
-  //注意，组件中的所有props中的数据都是通过父组件传递给子组件的       //propes中的数据是只可读               
+  <div id="app">
+  <!--父组件，可以在引用子组件的时候，通过属性绑定（v:bind）的形式，把需要传递给子组件的数据    传递到子组件内部-->
+  <com1 :parentmsg="msg"  :parentmsg2="msg2">
+  </com1></div><script>
+  var vm = new Vue({
+  el: '#app',
+  data:{
+  msg: '123父组件中的数据' ,
+  msg2:'124131313'        },
+  methods: {        },
+  components:{
+  'com1':{
+  //子组件中，默认无法访问到父组件中的data和methods                template: '<h1 @click="change"> 这是子组件 {{parentmsg}}、{{parentmsg2}}</h1>',
+  //注意，组件中的所有props中的数据都是通过父组件传递给子组件的       //propes中的数据是只可读
   props: ['parentmsg','parentmsg2'] ,
-  // 把父组件传递过来的parentmsg属性， 数组中，定义一下，这样才能用这个数据,                
-  //注意子组件中的data数据，并不是通过父组件传递过来的，而是子组件字有的，比如：子组件通过Ajax请求回来的值，可以放到data中           //dat a中的数据可读可写                
-  data(){                   
-          return {                       
-                  title: '123',                       
-                  content: 'qqq'                  
-  				}              
-  		},              
-   methods: {                   
-                      change(){                       
-                      this.parentmsg='被修改'                  
-  		         }                
-  	       },          
-  		}       
-  	}    
+  // 把父组件传递过来的parentmsg属性， 数组中，定义一下，这样才能用这个数据,
+  //注意子组件中的data数据，并不是通过父组件传递过来的，而是子组件字有的，比如：子组件通过Ajax请求回来的值，可以放到data中           //dat a中的数据可读可写
+  data(){
+          return {
+                  title: '123',
+                  content: 'qqq'
+  				}
+  		},
+   methods: {
+                      change(){
+                      this.parentmsg='被修改'
+  		         }
+  	       },
+  		}
+  	}
   })</script>
   ```
 
@@ -383,7 +394,7 @@ Vue.nextTick()
 
 - **vue为什么要求组件模板只能有一个根元素？**
 
-   
+
 
 - **EventBus注册在全局上时，路由切换时会重复触发事件，如何解决呢？**
 
@@ -409,8 +420,8 @@ Vue.nextTick()
    ```
    `<div id="app">
        <ul class="tabs">
-           <li class="li-tab" v-for="(item,index) in tabsParam" 
-           @click="toggleTabs(index)" 
+           <li class="li-tab" v-for="(item,index) in tabsParam"
+           @click="toggleTabs(index)"
            :class="index===nowIndex?'active':''">{{item}}</li>
        </ul>
        <div class="divTab" v-show="nowIndex===0">我是tab1</div>
@@ -432,7 +443,7 @@ Vue.nextTick()
 
 - **在子组件中怎么访问到父组件的实例？**
 
-   
+
 
 - **在组件中怎么访问到根实例？**
 
@@ -541,7 +552,7 @@ Vue.nextTick()
 
 - **你有使用过动态组件吗？说说你对它的理解**
 
-   
+
 
 - **prop验证的type类型有哪几种？**
 
@@ -583,7 +594,7 @@ Vue.nextTick()
 
 - **你了解vue的diff算法吗？**
 
-   
+
 
 - **vue如何优化首页的加载速度？**
 
@@ -662,7 +673,7 @@ Vue.nextTick()
 
 - **用vue怎么实现一个换肤的功能？**
 
-   
+
 
 - **有在vue中使用过echarts吗？踩过哪些坑？如何解决的？**
 
@@ -676,7 +687,7 @@ Vue.nextTick()
 
 - **说说你觉得认为的vue开发规范有哪些？**
 
-   
+
 
 - **vue部署上线前需要做哪些准备工作？**
 
@@ -762,7 +773,7 @@ Vue.nextTick()
 
 - **怎么缓存当前的组件？缓存后怎么更新？**
 
-   
+
 
 - **你了解什么是高阶组件吗？可否举个例子说明下？**
 

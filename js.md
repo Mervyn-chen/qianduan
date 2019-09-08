@@ -1,5 +1,35 @@
 # **js类和继承**
 
+# JavaScript版本号对比
+
+```
+/*
+ * 版本号比较方法
+ * 传入两个字符串，当前版本号：curV；比较版本号：reqV
+ * 调用方法举例：compare("1.1","1.2")，将返回false
+ */
+function compare(curV,reqV){
+   if(curV && reqV){
+      //将两个版本号拆成数字
+      var arr1 = curV.split('.'),
+          arr2 = reqV.split('.');
+      var minLength=Math.min(arr1.length,arr2.length),
+          position=0,
+          diff=0;
+      while(position<minLength && ((diff=parseInt(arr1[position])-parseInt(arr2[position]))==0)){
+          position++;
+      }
+      diff=(diff!=0)?diff:(arr1.length-arr2.length);
+      //若curV大于reqV，则返回true
+      return diff>0;
+   }else{
+      //输入为空
+      console.log("版本号不能为空");
+      return false;
+   }
+}
+```
+
 []()
 
 []: https://github.com/ziyi2/js/blob/master/JS%E7%B1%BB%E5%92%8C%E7%BB%A7%E6%89%BF.md	"js类和继承"
@@ -18,11 +48,11 @@
 
  闭包有三个特性：
 
- 1.函数嵌套函数  
+ 1.函数嵌套函数
 
- 2.函数内部可以引用外部的参数和变量 
+ 2.函数内部可以引用外部的参数和变量
 
- 3.参数和变量不会被垃圾回收机制回收 
+ 3.参数和变量不会被垃圾回收机制回收
 
 
 
@@ -162,7 +192,7 @@ function SubType(){
 
 在Javascript中，如果一个对象不再被引用，那么这个对象就会被GC回收。
 
-如果两个对象互相引用，而不再被第3者所引用，那么这两个互相引用的对象也会被回收。因为函数a被b引用，b又被a外的c引用，这就是为什么函数a执行后不会被回收的原因  
+如果两个对象互相引用，而不再被第3者所引用，那么这两个互相引用的对象也会被回收。因为函数a被b引用，b又被a外的c引用，这就是为什么函数a执行后不会被回收的原因
 
 ##### new操作符做了哪些事情？
 
@@ -303,7 +333,7 @@ Null类型也只有一个值，即`null`。null用来表示尚未存在的对象
 
 - const 声明创建一个值的只读引用 (即指针)，这里就要介绍下 JS 常用类型: String、Number、Boolean、Array、Object、Null、Undefined。其中基本类型有 Undefined、Null、Boolean、Number、String，保存在栈中；复合类型 有 Array、Object ，保存在堆中； 基本数据当值发生改变时，那么其对应的指针也将发生改变，故造成 const申明基本数据类型时，再将其值改变时，将会造成报错， 例如 const a = 3 ; a = 5 时 将会报错；但是如果是复合类型时，如果只改变复合类型的其中某个Value项时， 将还是正常使用；
 
-  
+
 
 ##### 箭头函数
 
@@ -346,7 +376,7 @@ var p = new Point(1, 2);
 
  7.class 的静态方法，使用关键字static,不需new,直接通过类来调用
 
- 8. 实例属性和静态属性的写法，实例属性在类的内部直接使用等式（=）写法，也可以写在constructor 方法里，静态属性只需在实例属性前加一个关键字static即可 
+ 8. 实例属性和静态属性的写法，实例属性在类的内部直接使用等式（=）写法，也可以写在constructor 方法里，静态属性只需在实例属性前加一个关键字static即可
 
 9.类的继承使用关键字extends,继承机制与es5完全不同，
 
