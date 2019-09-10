@@ -19,6 +19,26 @@ Chrome:Blink(基于webkit，Google与Opera Software共同开发)
 4.节约主域名的连接数，优化页面响应速度;
 5.防止不必要的安全问题。
 
+### 如何不让浏览器缓存静态资源
+
+一、请求时想要禁用缓存, 可以设置请求头: Cache-Control: no-cache, no-store, must-revalidate
+二、另一种常用做法: 给请求的资源增加一个版本号, 如下:
+
+```bash
+<link rel="stylesheet" type="text/css" href="../css/style.css?version=1.8.9"/>
+```
+
+这样做的好处就是你可以自由控制什么时候加载最新的资源.
+三、HTML也可以禁用缓存, 即在页面的HEAD中加入meta标签；虽能禁用缓存, 但只有部分浏览器支持, 而且由于代理不解析HTML文档, 故代理服务器也不支持这种方式.
+
+```xml
+ <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+```
+
+### HTTP客户端一般对同一个服务器的并发连接个数都是有限制的。
+
+实际上，浏览器确实使用并行连接，但它们将并行连接的总数限制为少量（通常为四个）。服务器可以自由地关闭来自特定客户端的过多连接。
+
 ### http协议中post和get方法的区别
 
 1，
