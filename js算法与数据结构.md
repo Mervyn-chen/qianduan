@@ -1,4 +1,4 @@
-## JavaScript(V8) 牛客输入输出
+## 1、JavaScript(V8) 牛客输入输出
 
 ```
 
@@ -12,7 +12,7 @@ while(line=readline()){
 
 
 
-## JavaScript(Node)
+## 2、JavaScript(Node)
 
 ```
 var readline = require('readline');
@@ -26,7 +26,7 @@ rl.on('line', function(line){
 });
 ```
 
-## 用sort给json对象数组排序
+## 3、用sort给json对象数组排序
 
 如下例子，我们按学生的
 总分排序，如果总分相等，我们再按照语文成绩排序。
