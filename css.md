@@ -1,13 +1,13 @@
-### 1、CSS的盒子模型？
+### CSS的盒子模型？
 
 （1）两种， IE 盒子模型、标准 W3C 盒子模型；IE 的content部分包含了 border 和 pading;
 （2）盒模型： 内容(content)、填充(padding)、边界(margin)、 边框(border)。
 
-### **2、如何利用CSS实现三角形？**
+### **如何利用CSS实现三角形？**
 
 将一个div的宽度和高度，都设置为0，设置div四个边框的宽度，并利用transparent属性隐藏三个边框，只留下一个边框，就可得到一个三角形？如果是直角三角形，则隐藏2个相邻的边框，剩下2个相邻的边框就拼成了一个直角三角形。
 
-### **3、如何利用CSS2实现元素水平垂直居中？**
+### **如何利用CSS2实现元素水平垂直居中？**
 
 利用绝对定位 + margin: auto实现，设置top left bottom right为0
 利用绝对定位，设置top left为50%，并设置transform： translate（-50%，-50%）实现
@@ -16,9 +16,40 @@
 
 将元素设置为table-cell，使用vertical-align: middle 以及text-align: center实现居中
 
-### **4、rem和em的区别？**
+### **rem和em的区别？**
 
-### 5、tramsform 和translate 以及translate
+
+
+
+### 事件冒泡
+
+点击子节点，会向上触发父节点，祖先节点的点击事件
+
+```
+原生js取消事件冒泡
+
+    try{
+        e.stopPropagation();//非IE浏览器
+    }
+    catch(e){
+        window.event.cancelBubble = true;//IE浏览器
+    }    
+原生js阻止默认事件 （浏览器的默认行为eg 点击超链接跳转）
+
+if ( e && e.preventDefault ) {
+            e.preventDefault()//非IE浏览器
+} else { window.event.returnValue = false; } //IE浏览器 
+    
+ 
+ vue.js取消事件冒泡
+
+<div @click.stop="doSomething($event)">vue取消事件冒泡</div>
+vue.js阻止默认事件
+
+<div @click.prevent="doSomething($event)">vue阻止默认事件</div>
+```
+
+### tramsform 和translate 以及translate
 
 translate:移动，transform的一个方法
 
@@ -32,7 +63,7 @@ transition: 允许CSS属性值在一定的时间区间内平滑的过渡，**（
 
 2. Animation通过模拟属性值改变来实现动画，动画结束之后元素的属性没有变化；而Transiton确实改变了元素的属性值，动画结束之后元素的属性发生了变化；这一点，这在实际应用中会产生很大的区别。
 
-### **6、position属性有哪些？**
+### **position属性有哪些？**
 
 static: 默认值，位于文档流之中，正常布局
 relative：位于文档流之中，可以使用top和left等属性，使其相对于原位置进行偏移
@@ -43,7 +74,7 @@ initial：默认样式
 
 unset：未设置，若该样式可继承，则相当于inherit，若不可继承，则相当于initial
 
-### **7、如何解决float属性引起的父元素塌陷问题？**
+### **如何解决float属性引起的父元素塌陷问题？**
 
 当两个盒子在垂直方向上设置margin值时，会出现塌陷现象
 
@@ -51,18 +82,18 @@ unset：未设置，若该样式可继承，则相当于inherit，若不可继�
 给父元素添加一个高度
 通过伪类，给这个伪类添加`clear: both` 和 `display: block`
 
-### **8、CSS各选择器的优先级？**
+### **CSS各选择器的优先级？**
 
 !important > 行内样式>ID选择器 > 类选择器/属性/伪类 > 标签 > 通配符 > 继承 > 浏览器默认属性
 
-### **9、vh和vw单位是什么？**
+### **vh和vw单位是什么？**
 
 vw：视窗宽度的百分比（1vw 代表视窗的宽度为 1%）
 vh：视窗高度的百分比
 vmin：当前 vw 和 vh 中较小的一个值
 vmax：当前 vw 和 vh 中较大的一个值
 
-### **10、说一下圣杯和双飞翼布局？**
+### **说一下圣杯和双飞翼布局？**
 
 圣杯布局就是三栏布局，其中左右两栏固定宽度，中间部分自适应
 
@@ -71,22 +102,22 @@ vmax：当前 vw 和 vh 中较大的一个值
 在html中，中间的块在最前面，后面紧跟左边的块和右边的块
 三者均设置float:left，中间块设置width:100%，此时中间块在一行，两个固定宽度的块在一行。
 左边块设置margin-left:100%，右边块设置margin-left: -width，此时左右块位于中间块的两边，但是其覆盖了中间块的两侧的一部分内容。
-设置外层容器padding：0 rightwidth 0 leftwidth，为左右两边腾出空白位置。设置左右块position:relative，且左块left: -width，且右块right: -width，使左右快分别向左和右偏移，从而占据了空白位置。 
+设置外层容器padding：0 rightwidth 0 leftwidth，为左右两边腾出空白位置。设置左右块position:relative，且左块left: -width，且右块right: -width，使左右快分别向左和右偏移，从而占据了空白位置。
 **双飞翼布局与圣杯布局达成的效果类似，只是实现方法有所差别而已。**区别在于双飞翼给中间块套了一个容器，通过设置该容器内部的中间块`margin`属性从而使中间块两侧的内容不被左右块遮挡。
 
-### **11、CSS可继承的属性**
+### **CSS可继承的属性**
 
-### **12、CSS选择器解析的方向是什么？为什么？**
+### **CSS选择器解析的方向是什么？为什么？**
 
-### **13、实现一个两栏布局，左边固定宽度，右边自适应？**
+### **实现一个两栏布局，左边固定宽度，右边自适应？**
 
-### **14、伪类和伪元素的区别？**
+### **伪类和伪元素的区别？**
 
 伪类的操作对象是文档树中已有的元素，而伪元素则创建了一个文档树外的元素。因此，伪类与伪元素的区别在于：**有没有创建一个文档树之外的元素。**
 
 CSS3规范中的要求使用双冒号(::)表示伪元素，以此来区分伪元素和伪类，比如::before和::after等伪元素使用双冒号(::)，:hover和:active等伪类使用单冒号(:)。除了一些低于IE8版本的浏览器外，大部分浏览器都支持伪元素的双冒号(::)表示方法。
 
-### **15、说一下CSS中的BFC是什么？有什么用？**
+### **说一下CSS中的BFC是什么？有什么用？**
 
 BFC即块状格式化上下文，BFC 是一个独立的布局环境,可以理解为一个容器,在这个容器中按照一定规则进行物品摆放,并且不会影响其它环境中的物品。如果一个元素符合触发 BFC 的条件，则 BFC 中的元素布局不受外部影响。
 创建BFC的方法：浮动元素 、绝对定位元素、display值为 inline-block | flex | inline-flex | table-cell 或 table-caption、overflow值为hidden，auto，scroll
@@ -95,11 +126,11 @@ BFC即块状格式化上下文，BFC 是一个独立的布局环境,可以理解
 
 比如浮动元素会形成BFC，浮动元素内部子元素的主要受该浮动元素影响，两个浮动元素之间是互不影响的。这里有点类似一个BFC就是一个独立的行政单位的意思。可以说BFC就是一个作用范围，把它理解成是一个独立的容器，并且这个容器里box的布局与这个容器外的box毫不相干。
 
-### 16、说说z-index有什么需要注意的地方
+### 说说z-index有什么需要注意的地方
 
 ![img](https://user-gold-cdn.xitu.io/2019/8/30/16ce245b90085292?imageslim)
 
-#### 17、触发BFC的条件
+#### 触发BFC的条件
 
 - 根元素或其它包含它的元素
 - 浮动元素 (元素的 `float` 不是 `none`)
@@ -112,7 +143,7 @@ BFC即块状格式化上下文，BFC 是一个独立的布局环境,可以理解
 - `display: flow-root`
 - `column-span: all`
 
-#### 18、BFC的约束规则
+#### BFC的约束规则
 
 - 内部的盒会在垂直方向一个接一个排列（可以看作BFC中有一个的常规流）
 - 处于同一个BFC中的元素相互影响，可能会发生外边距重叠
@@ -121,7 +152,7 @@ BFC即块状格式化上下文，BFC 是一个独立的布局环境,可以理解
 - 计算BFC的高度时，考虑BFC所包含的所有元素，连浮动元素也参与计算
 - 浮动盒区域不叠加到BFC上
 
-#### 19、BFC可以解决的问题
+#### BFC可以解决的问题
 
 - 垂直外边距重叠问题
 - 去除浮动
@@ -129,7 +160,7 @@ BFC即块状格式化上下文，BFC 是一个独立的布局环境,可以理解
 
 
 
-### 20、translate和top/left的比较
+### translate和top/left的比较
 
 translate是transform的一个方法，top、left是基于父元素的：  translate的参数：left（x 坐标） 和 top（y 坐标） 位置参数 ，
 如果是百分比，会以本身的长宽做参考top/left是布局类的样式，
@@ -140,7 +171,7 @@ translate是一个绘制样式（这名词我瞎编的），这个样式的变�
 
 translate3D传说因为走的是3D，所以能得到更完整的GPU加速的支持，在GPU中还有贴图缓存等手段帮你优化性能，所以更快
 
-### 21、viewport
+### viewport
 
 - **width**: 设置viewport宽度，为一个正整数，或字符串 device-width
 - **device-width**: 设备宽度
@@ -178,7 +209,7 @@ rem 按照设计稿标准走即可
 @ 仿宋     FangSong
 @ 楷体     KaiTi
 @ 仿宋_GB2312  FangSong_GB2312
-@ 楷体_GB2312  KaiTi_GB2312  
+@ 楷体_GB2312  KaiTi_GB2312
 @
 @ 说明：中文字体多数使用宋体、雅黑，英文用Helvetica
 
@@ -265,18 +296,18 @@ text-overflow: ellipsis;
 pc可以 移动端有问题
 
 ```
-input::-webkit-input-placeholder { 
-    /* WebKit browsers */ 
+input::-webkit-input-placeholder {
+    /* WebKit browsers */
     font-size:14px;
     color: #333;
-} 
-input::-moz-placeholder { 
-    /* Mozilla Firefox 19+ */ 
+}
+input::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
     font-size:14px;
     color: #333;
-} 
-input:-ms-input-placeholder { 
-    /* Internet Explorer 10+ */ 
+}
+input:-ms-input-placeholder {
+    /* Internet Explorer 10+ */
     font-size:14px;
     color: #333;
 }
