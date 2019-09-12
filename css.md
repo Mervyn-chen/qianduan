@@ -18,6 +18,37 @@
 
 ### **rem和em的区别？**
 
+
+
+
+### 事件冒泡
+
+点击子节点，会向上触发父节点，祖先节点的点击事件
+
+```
+原生js取消事件冒泡
+
+    try{
+        e.stopPropagation();//非IE浏览器
+    }
+    catch(e){
+        window.event.cancelBubble = true;//IE浏览器
+    }    
+原生js阻止默认事件 （浏览器的默认行为eg 点击超链接跳转）
+
+if ( e && e.preventDefault ) {
+            e.preventDefault()//非IE浏览器
+} else { window.event.returnValue = false; } //IE浏览器 
+    
+ 
+ vue.js取消事件冒泡
+
+<div @click.stop="doSomething($event)">vue取消事件冒泡</div>
+vue.js阻止默认事件
+
+<div @click.prevent="doSomething($event)">vue阻止默认事件</div>
+```
+
 ### tramsform 和translate 以及translate
 
 translate:移动，transform的一个方法
@@ -71,7 +102,7 @@ vmax：当前 vw 和 vh 中较大的一个值
 在html中，中间的块在最前面，后面紧跟左边的块和右边的块
 三者均设置float:left，中间块设置width:100%，此时中间块在一行，两个固定宽度的块在一行。
 左边块设置margin-left:100%，右边块设置margin-left: -width，此时左右块位于中间块的两边，但是其覆盖了中间块的两侧的一部分内容。
-设置外层容器padding：0 rightwidth 0 leftwidth，为左右两边腾出空白位置。设置左右块position:relative，且左块left: -width，且右块right: -width，使左右快分别向左和右偏移，从而占据了空白位置。 
+设置外层容器padding：0 rightwidth 0 leftwidth，为左右两边腾出空白位置。设置左右块position:relative，且左块left: -width，且右块right: -width，使左右快分别向左和右偏移，从而占据了空白位置。
 **双飞翼布局与圣杯布局达成的效果类似，只是实现方法有所差别而已。**区别在于双飞翼给中间块套了一个容器，通过设置该容器内部的中间块`margin`属性从而使中间块两侧的内容不被左右块遮挡。
 
 ### **CSS可继承的属性**
@@ -94,10 +125,6 @@ BFC即块状格式化上下文，BFC 是一个独立的布局环境,可以理解
 用处：避免外边距折叠，包含浮动元素（防止高度塌陷），避免浮动元素覆盖（防止文字环绕）
 
 比如浮动元素会形成BFC，浮动元素内部子元素的主要受该浮动元素影响，两个浮动元素之间是互不影响的。这里有点类似一个BFC就是一个独立的行政单位的意思。可以说BFC就是一个作用范围，把它理解成是一个独立的容器，并且这个容器里box的布局与这个容器外的box毫不相干。
-
-### ES6/ES7/ES8的特性
-
-
 
 ### 说说z-index有什么需要注意的地方
 
@@ -182,7 +209,7 @@ rem 按照设计稿标准走即可
 @ 仿宋     FangSong
 @ 楷体     KaiTi
 @ 仿宋_GB2312  FangSong_GB2312
-@ 楷体_GB2312  KaiTi_GB2312  
+@ 楷体_GB2312  KaiTi_GB2312
 @
 @ 说明：中文字体多数使用宋体、雅黑，英文用Helvetica
 
@@ -269,18 +296,18 @@ text-overflow: ellipsis;
 pc可以 移动端有问题
 
 ```
-input::-webkit-input-placeholder { 
-    /* WebKit browsers */ 
+input::-webkit-input-placeholder {
+    /* WebKit browsers */
     font-size:14px;
     color: #333;
-} 
-input::-moz-placeholder { 
-    /* Mozilla Firefox 19+ */ 
+}
+input::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
     font-size:14px;
     color: #333;
-} 
-input:-ms-input-placeholder { 
-    /* Internet Explorer 10+ */ 
+}
+input:-ms-input-placeholder {
+    /* Internet Explorer 10+ */
     font-size:14px;
     color: #333;
 }

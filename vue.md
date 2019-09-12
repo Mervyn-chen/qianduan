@@ -2,6 +2,38 @@
 
 new Vue() > 初始化事件和生命周期 > beforeCreate > 数据绑定 > created > 如果有el属性，则编译模板 > beforeMount > 添加$el属性，并替换掉挂载的DOM元素 > mounted > 数据更新 > beforeUpdate > 重新编译模板并渲染DOM > updated > 调用$destoryed > beforeDestory > 销毁vue实例 > destroyed
 
+
+
+# vue自定义指令
+
+```
+<div id ="app">
+  <iinput v-focus="">
+   </div>
+   #定义全局指令
+Vue.direcctive(‘focus’,{
+		inserted:function(el){
+			el.focus()
+		}
+})
+new Vue({
+		el:"app"
+})
+
+
+指令定义函数提供了几个钩子函数（可选）：
+
+bind: 只调用一次，指令第一次绑定到元素时调用，用这个钩子函数可以定义一个在绑定时执行一次的初始化动作。
+inserted: 被绑定元素插入父节点时调用（父节点存在即可调用，不必存在于 document 中）。
+update: 被绑定元素所在的模板更新时调用，而不论绑定值是否变化。通过比较更新前后的绑定值，可以忽略不必要的模板更新（详细的钩子函数参数见下）。
+componentUpdated: 被绑定元素所在模板完成一次更新周期时调用。
+unbind: 只调用一次， 指令与元素解绑时调用。
+
+接下来我们来看一下钩子函数的参数 (包括 el，binding，vnode，oldVnode) 。
+```
+
+
+
 # 虚拟DOM
 
 虚拟 dom 是相对于浏览器所渲染出来的真实 dom 的，在react，vue等技术出现之前，我们要改变页面展示的内容只能通过遍历查询 dom 树的方式找到需要修改的 dom 然后修改样式行为或者结构，来达到更新 ui 的目的。
@@ -30,7 +62,18 @@ MVVM是Model-View-ViewModel的简写。即模型-视图-视图模型。【模型
 
 
 
+### Vue 的响应式原理中 Object.defineProperty 有什么缺陷？为什么在 Vue3.0 采用了 Proxy，抛弃了Object.defineProperty？
+
+
+
+1. Object.defineProperty无法监控到数组下标的变化，导致通过数组下标添加元素，不能实时响应；
+2. Object.defineProperty只能劫持对象的属性，从而需要对每个对象，每个属性进行遍历，如果，属性值是对象，还需要深度遍历。Proxy可以劫持整个对象，并返回一个新的对象。
+3. Proxy不仅可以代理对象，还可以代理数组。还可以代理动态增加的属性。
+
+
+
 ### **VUE组件中 data 里面的数据为什么要return 出来**
+因为组件是用来复用的，且在JS中的对象之间是引用关系，那如果组件中的data是一个对象，那么这样作用域没有隔离，子组件中的data属性值会相互影响，相反如果组件中的data是个函数，那么每个实例可以维护一份被返回对象的独立的拷贝，那么这样组件实例之间的data属性值就不会互相影响了。
 
 因为组件是用来复用的，且在JS中的对象之间是引用关系，那如果组件中的data是一个对象，那么这样作用域没有隔离，子组件中的data属性值会相互影响，相反如果组件中的data是个函数，那么每个实例可以维护一份被返回对象的独立的拷贝，那么这样组件实例之间的data属性值就不会互相影响了。
 
@@ -78,36 +121,36 @@ Vue.nextTick()
   ### 父子组件传值
 
   ```
-  <div id="app">   
-  <!--父组件，可以在引用子组件的时候，通过属性绑定（v:bind）的形式，把需要传递给子组件的数据    传递到子组件内部-->    
-  <com1 :parentmsg="msg"  :parentmsg2="msg2">  
-  </com1></div><script>    
-  var vm = new Vue({       
-  el: '#app',       
-  data:{           
-  msg: '123父组件中的数据' ,           
-  msg2:'124131313'        },      
-  methods: {        },       
-  components:{           
-  'com1':{               
-  //子组件中，默认无法访问到父组件中的data和methods                template: '<h1 @click="change"> 这是子组件 {{parentmsg}}、{{parentmsg2}}</h1>',              
-  //注意，组件中的所有props中的数据都是通过父组件传递给子组件的       //propes中的数据是只可读               
+  <div id="app">
+  <!--父组件，可以在引用子组件的时候，通过属性绑定（v:bind）的形式，把需要传递给子组件的数据    传递到子组件内部-->
+  <com1 :parentmsg="msg"  :parentmsg2="msg2">
+  </com1></div><script>
+  var vm = new Vue({
+  el: '#app',
+  data:{
+  msg: '123父组件中的数据' ,
+  msg2:'124131313'        },
+  methods: {        },
+  components:{
+  'com1':{
+  //子组件中，默认无法访问到父组件中的data和methods                template: '<h1 @click="change"> 这是子组件 {{parentmsg}}、{{parentmsg2}}</h1>',
+  //注意，组件中的所有props中的数据都是通过父组件传递给子组件的       //propes中的数据是只可读
   props: ['parentmsg','parentmsg2'] ,
-  // 把父组件传递过来的parentmsg属性， 数组中，定义一下，这样才能用这个数据,                
-  //注意子组件中的data数据，并不是通过父组件传递过来的，而是子组件字有的，比如：子组件通过Ajax请求回来的值，可以放到data中           //dat a中的数据可读可写                
-  data(){                   
-          return {                       
-                  title: '123',                       
-                  content: 'qqq'                  
-  				}              
-  		},              
-   methods: {                   
-                      change(){                       
-                      this.parentmsg='被修改'                  
-  		         }                
-  	       },          
-  		}       
-  	}    
+  // 把父组件传递过来的parentmsg属性， 数组中，定义一下，这样才能用这个数据,
+  //注意子组件中的data数据，并不是通过父组件传递过来的，而是子组件字有的，比如：子组件通过Ajax请求回来的值，可以放到data中           //dat a中的数据可读可写
+  data(){
+          return {
+                  title: '123',
+                  content: 'qqq'
+  				}
+  		},
+   methods: {
+                      change(){
+                      this.parentmsg='被修改'
+  		         }
+  	       },
+  		}
+  	}
   })</script>
   ```
 
@@ -383,7 +426,7 @@ Vue.nextTick()
 
 - **vue为什么要求组件模板只能有一个根元素？**
 
-   
+
 
 - **EventBus注册在全局上时，路由切换时会重复触发事件，如何解决呢？**
 
@@ -409,8 +452,8 @@ Vue.nextTick()
    ```
    `<div id="app">
        <ul class="tabs">
-           <li class="li-tab" v-for="(item,index) in tabsParam" 
-           @click="toggleTabs(index)" 
+           <li class="li-tab" v-for="(item,index) in tabsParam"
+           @click="toggleTabs(index)"
            :class="index===nowIndex?'active':''">{{item}}</li>
        </ul>
        <div class="divTab" v-show="nowIndex===0">我是tab1</div>
@@ -432,7 +475,7 @@ Vue.nextTick()
 
 - **在子组件中怎么访问到父组件的实例？**
 
-   
+
 
 - **在组件中怎么访问到根实例？**
 
@@ -541,7 +584,7 @@ Vue.nextTick()
 
 - **你有使用过动态组件吗？说说你对它的理解**
 
-   
+
 
 - **prop验证的type类型有哪几种？**
 
@@ -583,7 +626,7 @@ Vue.nextTick()
 
 - **你了解vue的diff算法吗？**
 
-   
+
 
 - **vue如何优化首页的加载速度？**
 
@@ -662,7 +705,7 @@ Vue.nextTick()
 
 - **用vue怎么实现一个换肤的功能？**
 
-   
+
 
 - **有在vue中使用过echarts吗？踩过哪些坑？如何解决的？**
 
@@ -676,7 +719,7 @@ Vue.nextTick()
 
 - **说说你觉得认为的vue开发规范有哪些？**
 
-   
+
 
 - **vue部署上线前需要做哪些准备工作？**
 
@@ -762,7 +805,7 @@ Vue.nextTick()
 
 - **怎么缓存当前的组件？缓存后怎么更新？**
 
-   
+
 
 - **你了解什么是高阶组件吗？可否举个例子说明下？**
 
