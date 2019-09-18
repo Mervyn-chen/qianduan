@@ -107,6 +107,10 @@ vmax：当前 vw 和 vh 中较大的一个值
 
 ### **CSS可继承的属性**
 
+可继承的样式： font-size, font-family, color, text-indent;
+
+不可继承的样式：border, padding, margin, width, height ;
+
 ### **CSS选择器解析的方向是什么？为什么？**
 
 ### **实现一个两栏布局，左边固定宽度，右边自适应？**
